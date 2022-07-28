@@ -2,55 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 int v, e;
-typedef struct _node{
-  int vertex;
-  int value;
-  struct _node *next;
-} node;
-node **graph;
-void link(int veri, int verj, int val)
-{
-  node *a = graph[veri];
-  while(a->next!=NULL)
-  {
-    a = a->next;
-  }
-  node *temp = (node *)malloc(sizeof(node));
-  temp->vertex = verj;
-  temp->value = val;
-  temp->next = NULL;
-  a->next = temp;
-
-  node *b = graph[verj];
-  while(b->next!=NULL)
-  {
-    b = b->next;
-  }
-  node *temp2 = (node *)malloc(sizeof(node));
-  temp2->vertex = veri;
-  temp2->value = val;
-  temp2->next = NULL;
-  b->next = temp2;
-  
-}
-int valueij(int veri, int verj)
-{
-  node *a = graph[veri];
-
-  while(a!=NULL)
-  {
-    if(a->vertex==verj)
-    {
-      return a->value;
-    }
-    else
-    {
-      a = a->next;
-    }
-  }
-  return 0;
-
-}
+int** array;
 int prim(int r)
 {
   int* minheap=(int*)calloc(v+1, sizeof(int)); // 사실 minheap 아님
@@ -108,10 +60,9 @@ int prim(int r)
 
     for (int i = 1; i <= minheap_size;i++)
     {
-      int valueijthingy = valueij(u, minheap[i]);
-      if(valueijthingy!=0&&valueijthingy<d[minheap[i]]) // 연결된 점 & d change
+      if(array[u][minheap[i]]!=0&&array[u][minheap[i]]<d[minheap[i]]) // 연결된 점 & d change
       {
-        d[minheap[i]] = valueijthingy;
+        d[minheap[i]] = array[u][minheap[i]];
       }
     }
   }
@@ -128,23 +79,19 @@ int prim(int r)
 int main(void)
 {
   scanf("%d %d", &v, &e);
-  graph=(node **)malloc((v+1)*sizeof(node*));
+  array = (int **)calloc(v + 1, sizeof(int));
   for (int i = 1; i <= v;i++)
   {
-    graph[i] = (node *)malloc(sizeof(node));
-    graph[i]->vertex = 0;
-    graph[i]->value = 0;
-    graph[i]->next = NULL;
+    array[i] = (int *)calloc(v+1,  sizeof(int));
   }
   for (int i = 0; i <= e - 1; i++)
   {
-    int j;
-    int k;
-    int value_main;
+    int j = 0;
+    int k = 0;
     scanf("%d", &j);
     scanf("%d", &k);
-    scanf("%d", &value_main);
-    link(j, k, value_main);
+    scanf("%d", &array[j][k]);
+    array[k][j] = array[j][k];
   }
   int min = 2147483647;
   for (int i = 1; i <= v;i++)
